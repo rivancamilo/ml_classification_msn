@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  mlflow-prefect:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # MLflow UI
+      - "4200:4200"  # Prefect server
+    volumes:
+      - ./data:/app/data  # Map your local data directory to the container
+      - ./mlruns:/app/mlruns  # Persist MLflow runs
+    environment:
+      - PREFECT_API_URL=http://mlflow-prefect:4200/api
+      - MLFLOW_TRACKING_URI=http://mlflow-prefect:5000
+    networks:
+      - mlflow-network
+
+networks:
+  mlflow-network:
+    driver: bridge

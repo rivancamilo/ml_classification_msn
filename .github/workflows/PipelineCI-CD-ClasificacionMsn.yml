@@ -1,0 +1,74 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Pipeline CI/CD – Modelo Clasificación Tuits
+
+# Controls when the workflow will run
+on:
+  push:
+    branches: [ "main","develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Build Docker image
+      run: |
+        docker build -t clasificacionmsn:${{ github.sha }} .
+        docker tag clasificacionmsn:${{ github.sha }} clasificacionmsn:latest
+    - name: Test Docker container
+      run: |
+        # Ejecutar contenedor en background para testing
+        docker run -d --name test_container \
+          -p 5000:5000 -p 4200:4200 \
+          clasificacionmsn:latest
+
+        # Esperar a que los servicios estén listos
+        sleep 30
+        
+        # Verificar que MLflow esté respondiendo
+        curl -f http://localhost:5000 || exit 1
+        
+        # Verificar que Prefect esté respondiendo
+        curl -f http://localhost:4200 || exit 1
+        
+        # Limpiar
+        docker stop test_container
+        docker rm test_container
+    
+    - name: Save Docker image
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker save clasificacionmsn:latest | gzip > clasificacionmsn.tar.gz
+    
+    - name: Upload artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-image
+        path: clasificacionmsn.tar.gz
+        retention-days: 1
+deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: docker-image
+    
+    - name: Load Docker image
+      run: |
+        docker load < clasificacionmsn.tar.gz
+    - name: Simulate deployment
+      run: |
+        echo "🚀 Deployment simulation completed"
+        echo "Image: clasificacionmsn:${{ github.sha }}"
+        echo "Services: MLflow (port 5000), Prefect (port 4200)"
+        echo "Volume: ./mlruns mounted for persistence"
+        

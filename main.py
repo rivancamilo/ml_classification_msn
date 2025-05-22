@@ -13,7 +13,7 @@
 # Importar las dependencias centralizadas
 from librerias import (
     os, np, pd, mlflow, flow, task, logging, warnings,
-    setup_logging, setup_warnings, setup_mlflow
+    setup_logging, setup_warnings
 )
 
 from config import *

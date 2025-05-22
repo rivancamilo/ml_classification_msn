@@ -24,17 +24,64 @@ jobs:
         # Ejecutar contenedor en background para testing
         docker run -d --name test_container \
           -p 5000:5000 -p 4200:4200 \
+          -v /tmp/mlruns:/app/mlruns \
           clasificacionmsn:latest
-
-        # Esperar a que los servicios estén listos
-        sleep 30
         
-        # Verificar que MLflow esté respondiendo
-        curl -f http://localhost:5000 || exit 1
+        echo "Contenedor iniciado, esperando a que los servicios estén listos..."
         
-        # Verificar que Prefect esté respondiendo
-        curl -f http://localhost:4200 || exit 1
+        # Función para esperar que un servicio esté listo
+        wait_for_service() {
+          local url=$1
+          local service_name=$2
+          local max_attempts=30
+          local attempt=1
+          
+          echo "Esperando a que $service_name esté listo en $url..."
+          
+          while [ $attempt -le $max_attempts ]; do
+            if curl -s --connect-timeout 5 --max-time 10 $url > /dev/null 2>&1; then
+              echo "OK ---> $service_name está listo (intento $attempt)"
+              return 0
+            fi
+            echo "Esperando... Intento $attempt/$max_attempts - $service_name no está listo aún"
+            sleep 10
+            attempt=$((attempt + 1))
+          done
+          
+          echo "Error --> $service_name no respondió después de $max_attempts intentos"
+          return 1
+        }
         
+        # Mostrar logs del contenedor para debug
+        echo "Logs del contenedor:"
+        docker logs test_container
+        
+        # Verificar que el contenedor esté corriendo
+        if ! docker ps | grep test_container; then
+          echo "Error --> El contenedor no está corriendo"
+          docker logs test_container
+          exit 1
+        fi
+        
+        # Esperar a que MLflow esté listo
+        if ! wait_for_service "http://localhost:5000" "MLflow"; then
+          echo "Logs finales del contenedor:"
+          docker logs test_container
+          docker stop test_container
+          docker rm test_container
+          exit 1
+        fi
+        
+        # Esperar a que Prefect esté listo
+        if ! wait_for_service "http://localhost:4200" "Prefect"; then
+          echo "Logs finales del contenedor:"
+          docker logs test_container
+          docker stop test_container
+          docker rm test_container
+          exit 1
+        fi
+        
+        echo "OK : Todos los servicios están funcionando correctamente"
         # Limpiar
         docker stop test_container
         docker rm test_container

@@ -51,24 +51,24 @@ jobs:
         name: docker-image
         path: clasificacionmsn.tar.gz
         retention-days: 1
-deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: docker-image
-    
-    - name: Load Docker image
-      run: |
-        docker load < clasificacionmsn.tar.gz
-    - name: Simulate deployment
-      run: |
-        echo "🚀 Deployment simulation completed"
-        echo "Image: clasificacionmsn:${{ github.sha }}"
-        echo "Services: MLflow (port 5000), Prefect (port 4200)"
-        echo "Volume: ./mlruns mounted for persistence"
-        
+  deploy:
+      needs: build-and-test
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/main'
+      
+      steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+      
+      - name: Load Docker image
+        run: |
+          docker load < clasificacionmsn.tar.gz
+      - name: Simulate deployment
+        run: |
+          echo "Simulación de implementación completada"
+          echo "Image: clasificacionmsn:${{ github.sha }}"
+          echo "Servicios: MLflow (puerto 5000), Prefect (puerto 4200)"
+          echo "Volume: ./mlruns mounted for persistence"
+          

@@ -1,25 +1,21 @@
-# Analisis de datos
 pandas
 numpy
-joblib
-
-# Visualización de graficas
-matplotlib
-wordcloud
-
-#NPL
-nltk
-emoji
-
-# ML
 scikit-learn
-
-# MLflow Y Perfect
+matplotlib
+seaborn
+nltk
+wordcloud
+emoji
 mlflow>=2.0.0
 prefect>=2.0.0
+joblib
 
-#Otras librerias
 pytest
 pytest-cov
 jupyter
-
+black
+isort
+flake8
+evidently
+python-dotenv>=0.19.0
+requests>=2.28.0

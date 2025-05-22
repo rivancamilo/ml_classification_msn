@@ -1,4 +1,49 @@
-# Importar dependencias desde el módulo centralizado
+""" 
+    modelo.py
+    Descripción:
+        Esta clase se encarga de transformar los textos en representaciones numéricas, 
+        entrenar el modelo de clasificación y generar las métricas de evaluación correspondientes.
+
+    Métodos:
+        data_transform(df):
+            Recibe un DataFrame y retorna las variables X (características) e y (etiquetas) para el modelo.
+
+        decode_labels_into_idx(y):
+            Convierte las etiquetas categóricas de la variable y en valores numéricos.
+
+        fit_transform(X):
+            Vectoriza el texto, es decir, convierte cada tuit en un vector 
+            donde cada dimensión representa una palabra del vocabulario, y 
+            su valor corresponde a la frecuencia de esa palabra en el mensaje.
+
+        transform_tfidf(X):
+            Aplica la técnica TF-IDF para ponderar las palabras más relevantes 
+            en cada mensaje, considerando su frecuencia en el documento y en el corpus.
+
+        save_pickle(obj, path):
+            Guarda objetos generados durante el proceso (como modelos entrenados 
+            o transformadores como TfidfVectorizer) en archivos .pkl mediante la serialización con pickle.
+
+        split_train_test(X, y):
+            Divide los datos en conjuntos de entrenamiento y prueba. Uno se 
+            utiliza para entrenar el modelo y el otro para evaluar qué tan bien aprendió.
+
+        display_classification_report(y_true, y_pred):
+            Genera y muestra las métricas de evaluación del modelo (precisión, recall, F1-score, etc.).
+
+        train_model(X_train, y_train):
+            Realiza el entrenamiento del modelo de clasificación utilizando los datos de entrenamiento.
+
+        run(df):
+            Ejecuta los métodos principales de manera secuencial para llevar a 
+            cabo todo el flujo de trabajo: desde la transformación de los datos hasta el 
+            entrenamiento del modelo y la evaluación final.
+
+    Autor: Ivan Camilo Rosales
+    Fecha: 2025-05-21
+    
+"""
+
 from librerias import (
     os, pickle, joblib, logging, np, pd, plt,
     Dict, Tuple, Optional, Any,
@@ -144,20 +189,7 @@ class ModelTrain:
 
         print("Classification Report for Train:\n", model_report_train)
         print("Classification Report for Test:\n", model_report_test)
-
-        # Plot the confusion matrix
-        """ label_map = self.label2idx
-        fig, ax = plt.subplots(figsize=(12, 8))
-        decoded_y_test_pred = [label_map[idx] for idx in y_test_pred]
-        decoded_y_test = [label_map[idx] for idx in y_test]
-
-        cm = confusion_matrix(decoded_y_test, decoded_y_test_pred)
-        cmp = ConfusionMatrixDisplay(cm, display_labels=list(label_map.values()))
-        cmp.plot(ax=ax)
-
-        plt.xticks(rotation=80)
-        plt.show() """
-
+        
         # Log model to MLflow again with a different path
         mlflow.sklearn.log_model(
             sk_model=model,
@@ -222,8 +254,10 @@ class ModelTrain:
         )
         
         return model
+  
     
-"""     
+"""
+# 
 if __name__ == "__main__":
     datos = pd.read_csv('./data/output/feature_twcs_2.csv')
     model_trainer = ModelTrain()
@@ -233,4 +267,4 @@ if __name__ == "__main__":
         developer="Ivan Camilo Rosales",
         C=1.0,
         max_iter=1000
-    ) """
+) """

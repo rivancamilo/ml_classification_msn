@@ -1,3 +1,45 @@
+""" 
+    textProcessing.py
+    Descripción:
+        Esta clase se encarga del preprocesamiento de los mensajes de texto, realizando tareas como la eliminación de caracteres especiales, emojis, URLs, dígitos, y otras transformaciones necesarias para preparar los datos antes de entrenar un modelo de machine learning.
+
+    Métodos:
+        eliminar_urls(text):
+            Elimina las URLs presentes en el texto del mensaje.
+        delete_caracter_especial(text):
+            Limpia caracteres especiales, incluyendo letras con tildes y otros signos no alfabéticos.
+        remove_emoji(text):
+            Elimina los emojis presentes en el texto.
+        delete_digitos(text):
+            Elimina todos los dígitos numéricos del texto.
+        delete_puntuacion(text):
+            Elimina los signos de puntuación del texto.
+        tokenize(text):
+            Divide el texto en una lista de palabras o tokens, lo que facilita
+            su análisis y procesamiento posterior.
+        remove_stopwords(tokens):
+            Elimina las palabras vacías (stopwords), es decir, palabras comunes que no 
+            aportan información útil al análisis (como "y", "de", "el").
+        lemmatize(tokens):
+            Convierte cada palabra a su forma base o "lema", ayudando a reducir la 
+            variabilidad lingüística (por ejemplo, "corriendo" → "correr").
+        procesador_texto(text):
+            Aplica de forma secuencial todos los métodos de limpieza y 
+            transformación del texto, como la eliminación de emojis, stopwords, dígitos, etc.
+        save_processed_data(df, ruta):
+            Guarda el DataFrame procesado en un archivo CSV.
+        read_csv(ruta):
+            Lee un archivo CSV y carga los datos en un DataFrame de pandas.
+        data_transform(df):
+            Convierte tipos de datos y elimina columnas que no son relevantes para el análisis.
+        run():
+            Integra y ejecuta todos los métodos de limpieza y transformación para preparar el conjunto de datos final.
+    Autor: Ivan Camilo Rosales
+    Fecha: 2025-05-21
+"""
+
+
+
 from librerias import (
     pd, os, re, string, logging, datetime,
     punctuation, word_tokenize, stopwords, SnowballStemmer,

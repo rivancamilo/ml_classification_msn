@@ -1,4 +1,12 @@
-# ==== IMPORTACIONES ESTÁNDAR DE PYTHON ====
+""" 
+    librerias.py
+    Descripción:
+        Este módulo reúne y gestiona todas las librerías empleadas en el proyecto
+    Autor: Ivan Camilo Rosales
+    Fecha: 2025-05-21
+"""
+
+#-----  Librerías básicas de Python
 import os
 import re
 import json
@@ -11,18 +19,18 @@ from typing import Dict, Tuple, Optional, Any, List, Union
 from string import punctuation
 
 
-# ==== IMPORTACIONES DE PROCESAMIENTO DE DATOS ====
+#-----  Librerías para el procesamiento de los datos
 import numpy as np
 import pandas as pd
 import joblib
 
 
-# ==== IMPORTACIONES DE VISUALIZACIÓN ====
+#-----  Librerías para la generación de graficas
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 
-# ==== IMPORTACIONES DE NLP ====
+#----   Librerías de NLP
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -31,7 +39,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import emoji
 
 
-# ==== IMPORTACIONES DE SCIKIT-LEARN ====
+#-----  Librerías de SCIKIT-LEARN
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -45,18 +53,17 @@ from sklearn.metrics import (
 )
 
 
-# ==== IMPORTACIONES DE MLFLOW ====
+#-----  Librerías de MLFlow
 import mlflow
 from mlflow.models.signature import infer_signature
 
 
-# ==== IMPORTACIONES DE PREFECT ====
+#-----  Librerías de Perfect
 from prefect import flow, task
 
 
-# ==== CONFIGURACIÓN INICIAL ====
+#-----  Funciones de configuración inicial
 def setup_nltk():
-    """Configura las dependencias de NLTK necesarias."""
     nltk_packages = [
         'stopwords',
         'punkt',
@@ -73,7 +80,6 @@ def setup_nltk():
 
 
 def setup_logging(level=logging.INFO):
-    """Configura el sistema de logging para el proyecto."""
     logging.basicConfig(
         level=level,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -83,26 +89,4 @@ def setup_logging(level=logging.INFO):
 
 
 def setup_warnings():
-    """Configura los warnings para el proyecto."""
     warnings.filterwarnings("ignore")
-
-
-def setup_mlflow(tracking_uri, experiment_name):
-    """Configura MLflow para el proyecto."""
-    
-    mlflow.set_tracking_uri(tracking_uri)
-    
-    try:
-        experiment = mlflow.get_experiment_by_name(experiment_name)
-        if experiment is None:
-            experiment_id = mlflow.create_experiment(experiment_name)
-            logger.info(f"Created new experiment '{experiment_name}' with ID: {experiment_id}")
-        else:
-            experiment_id = experiment.experiment_id
-            logger.info(f"Using existing experiment '{experiment_name}' with ID: {experiment_id}")
-        
-        mlflow.set_experiment(experiment_name)
-        return experiment_id
-    except Exception as e:
-        logger.error(f"Error setting up MLflow experiment: {e}")
-        return 0

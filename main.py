@@ -1,5 +1,12 @@
-"""
-Módulo principal que coordina el flujo de trabajo del proyecto.
+""" 
+    Descripción:
+        Módulo principal que coordina el flujo de trabajo del proyecto, 
+        desde la ingesta, limpieza y transformación de los datos, hasta 
+        el entrenamiento del modelo encargado de clasificar los tuits. Todo 
+        este proceso se realiza mediante tareas (tasks).
+        
+    Autor: Ivan Camilo Rosales
+    Fecha: 2025-05-21
 """
 
 
@@ -17,22 +24,9 @@ from config import MLFLOW_TRACKING_URI, MLFLOW_EXPERIMENT_NAME
 
 
 
-# Configuración inicial
+
 logger = setup_logging()
 setup_warnings()
-#experiment_id = setup_mlflow(experiment_name=MLFLOW_EXPERIMENT_NAME)
-
-# Por esta versión explícita:
-""" experiment_id = setup_mlflow(
-    tracking_uri=MLFLOW_TRACKING_URI,
-    experiment_name=MLFLOW_EXPERIMENT_NAME
-) """
-
-
-
-""" logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-warnings.filterwarnings("ignore") """
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -42,17 +36,15 @@ if not os.environ.get("MLFLOW_TRACKING_URI"):
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-#-----  Crear experimento si no existe
-experiment_name = "Clasificación_Tuits"
-
+#-----  Creamos un experimento si no existe
 try:
-    experiment = mlflow.get_experiment_by_name(experiment_name)
+    experiment = mlflow.get_experiment_by_name(MLFLOW_EXPERIMENT_NAME)
     if experiment is None:
-        experiment_id = mlflow.create_experiment(experiment_name)
-        logger.info(f"Created new experiment '{experiment_name}' with ID: {experiment_id}")
+        experiment_id = mlflow.create_experiment(MLFLOW_EXPERIMENT_NAME)
+        logger.info(f"Created new experiment '{MLFLOW_EXPERIMENT_NAME}' with ID: {experiment_id}")
     else:
         experiment_id = experiment.experiment_id
-        logger.info(f"Using existing experiment '{experiment_name}' with ID: {experiment_id}")
+        logger.info(f"Using existing experiment '{MLFLOW_EXPERIMENT_NAME}' with ID: {experiment_id}")
 except Exception as e:
     logger.error(f"Error setting up MLflow experiment: {e}")
     experiment_id = 0
@@ -60,10 +52,7 @@ except Exception as e:
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #-----  Establecemos el experimento de MLFLOW
-mlflow.set_experiment(experiment_name)
-
-
-
+mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
 
 
 
@@ -79,6 +68,7 @@ def text_processing_task(idioma: str, file_name: str, version: int):
     text_processing = TextProcessing(idioma=idioma)
     text_processing.run(file_name=file_name, version=version)
     logger.info("Tarea de procesamiento de texto completada")
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------

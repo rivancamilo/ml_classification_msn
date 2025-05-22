@@ -1,23 +1,24 @@
-""" import json
-import pandas as pd
-import os
-import string
-import re
-import logging
-import warnings
-import datetime
-
-from string import punctuation
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
-import nltk
-
-
-from nltk.sentiment import SentimentIntensityAnalyzer
-from sklearn.feature_extraction.text import TfidfVectorizer
-import logging
-import matplotlib.pyplot as plt """
+""" 
+    featureExtraction.py
+    Descripción:
+        Esta clase asigna una de las tres categorías (positivo, negativo, neutral) a cada tuit, 
+        basándose en el score obtenido del texto.
+        
+    Métodos:
+        save_processed_data:
+            Guarda los datos del DataFrame en un archivo .csv.
+        read_csv: 
+            Carga el archivo preprocesado y lo convierte en un DataFrame.
+        etiquetar_sentimiento: 
+            Recibe un texto y le asigna una categoría según el puntaje (score) obtenido.
+        data_transform: 
+            Recibe un DataFrame y convierte todas las columnas según el tipo de dato que contienen.
+        run:   
+            Integra todos los métodos anteriores para ejecutar el proceso completo de forma secuencial.
+    Autor: Ivan Camilo Rosales
+    Fecha: 2025-05-21
+    
+"""
 
 from librerias import (
     pd, os, logging, 
@@ -74,14 +75,12 @@ class FeatureExtraction:
         data = data.dropna(axis=1)
         data.dropna(inplace=True)
         data['sentimiento'] = data['textCls'].apply(self.etiquetar_sentimiento)
-
         
         self.save_processed_data(
             df=data,
             path=DATA_PATH_PROCESSED,
             file_name=f"feature_{file_name}_{version}.csv",
         )
-
 
 """ if __name__ == "__main__":
     text_processing = FeatureExtraction()
